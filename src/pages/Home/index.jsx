@@ -7,7 +7,8 @@ import {
   TrashButton, 
   Input, 
   Title, 
-  ProductList 
+  ProductList,
+  MarkButton // Adicionei o novo botão
 } from './styles'
 
 function Home() {
@@ -17,12 +18,18 @@ function Home() {
   function cliqueiNoBotao() {
     if (!inputRef.current.value.trim()) return; // Evita adicionar produtos vazios
 
-    setProdutos([{ id: uuidv4(), nome: inputRef.current.value }, ...produtos])
+    setProdutos([{ id: uuidv4(), nome: inputRef.current.value, comprado: false }, ...produtos])
     inputRef.current.value = ''; 
   }
 
   function deletarProduto(id) {
     setProdutos(produtos.filter(produto => produto.id !== id))
+  }
+
+  function marcarProduto(id) {
+    setProdutos(produtos.map(produto => 
+      produto.id === id ? { ...produto, comprado: !produto.comprado } : produto
+    ))
   }
 
   return (
@@ -37,8 +44,11 @@ function Home() {
       <ProductList>
         {produtos.length > 0 ? (
           produtos.map((produto) => (
-            <Product key={produto.id}>
+            <Product key={produto.id} style={{ textDecoration: produto.comprado ? 'line-through' : 'none' }}>
               <p>{produto.nome}</p>
+              <MarkButton onClick={() => marcarProduto(produto.id)}>
+                {produto.comprado ? 'Desmarcar' : 'Marcar'}
+              </MarkButton>
               <TrashButton onClick={() => deletarProduto(produto.id)}>🗑️</TrashButton>
             </Product>
           ))
